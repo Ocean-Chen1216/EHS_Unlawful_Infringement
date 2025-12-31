@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MK職場不法侵害預防評估表 v6.0 (客製讀取+自動分類)</title>
+<title>MK職場不法侵害預防評估表 v6.1 (報告視覺優化版)</title>
 <link rel="icon" href="icon.png" type="image/png">
 <link rel="manifest" href="manifest.json">
 <style>
@@ -63,9 +63,8 @@
 </div>
 
 <div class="container">
-  <div class="version-tag">v6.0 (客製讀取+自動分類)</div>
+  <div class="version-tag">v6.1 (報告視覺優化版)</div>
   <h2 style="text-align:center; color:#2c3e50;">職場不法侵害預防評估表</h2>
-  
   <div class="section">
     <h3>1. 基本資料</h3>
     <label>姓名</label><input type="text" id="empName" placeholder="請輸入姓名">
@@ -85,18 +84,15 @@
 <option value="總管理">總管理</option></select>
     <label>日期</label><input type="date" id="evalDate">
   </div>
-
   <div class="section">
     <h3>2. 風險辨識 <button class="btn-info" onclick="document.getElementById('infoModal').style.display='block'">❓ 標準</button></h3>
     <div id="riskList"></div>
   </div>
-
   <div class="section">
     <h3>3. 簽名確認 <span style="color:red; font-size:0.8rem;">(必填)</span></h3>
     <canvas id="sigCanvas" style="width:100%; height:150px; border:2px dashed #ccc;"></canvas>
     <button onclick="clearSig()" style="margin-top:5px; background:#ccc; border:none; padding:5px; border-radius:4px;">清除重簽</button>
   </div>
-
   <button class="btn-download" onclick="generateReport()">1. 下載報告 (HTML)</button>
   <button class="btn-email" onclick="sendEmail()">2. 寄給負責人</button>
 </div>
@@ -264,12 +260,10 @@ const defs = {
 };
 let hasSigned = false;
 
-// 渲染
 const list = document.getElementById('riskList');
 questions.forEach((item, idx) => {
     let preSelected = [];
     if(item.types) { preSelected = item.types.split(/[、,;]/).map(t => t.trim()); }
-
     let vHtml = "";
     violenceList.forEach(v => {
         const isChecked = preSelected.includes(v);
@@ -277,12 +271,10 @@ questions.forEach((item, idx) => {
         const clsStr = isChecked ? "v-option pre-checked" : "v-option";
         vHtml += `<label class="${clsStr}"><input type="checkbox" name="v_type_${idx}" value="${v}" ${checkedStr}> ${v}</label>`;
     });
-
     let chipsHtml = "";
     commonControls.forEach(c => {
         chipsHtml += `<span class="chip" onclick="addControl(${idx}, '${c}')">${c}</span>`;
     });
-
     const div = document.createElement('div');
     div.className = 'risk-row';
     div.innerHTML = `
@@ -291,18 +283,15 @@ questions.forEach((item, idx) => {
             <strong>${item.q}</strong>
             ${item.note ? `<div class="mk-note">${item.note}</div>` : ''}
         </div>
-        
         <label>是否適用 / 存在此風險？</label>
         <div class="toggle-area" id="toggle_area_${idx}">
              <div class="btn-toggle" id="btn_yes_${idx}" onclick="toggleApp(${idx}, true)">□ 是 (填寫細項)</div>
              <div class="btn-toggle active-no" id="btn_no_${idx}" onclick="toggleApp(${idx}, false)">■ 否 (無風險)</div>
         </div>
         <input type="hidden" id="is_app_${idx}" value="false">
-
         <div id="detail_${idx}" class="detail-area">
             <label style="margin-top:10px;">1. 確認暴力類型 (可複選)：</label>
             <div class="violence-grid" id="v_grid_${idx}">${vHtml}</div>
-
             <div class="eval-box">
                 <div class="eval-select">
                     <label style="font-size:0.8rem;margin-bottom:2px;">2. 可能性</label>
@@ -321,7 +310,6 @@ questions.forEach((item, idx) => {
                 </div>
                 <div id="res_${idx}" class="risk-result risk-low" data-score="1">1<br>低度</div>
             </div>
-
             <div class="control-box">
                 <label>4. 現有控制措施 (必填)：</label>
                 <div class="chip-container">${chipsHtml}</div>
@@ -342,24 +330,20 @@ function toggleApp(idx, isYes) {
     const btnYes = document.getElementById(`btn_yes_${idx}`);
     const btnNo = document.getElementById(`btn_no_${idx}`);
     if(isYes) {
-        detail.classList.add('show');
-        val.value = "true";
+        detail.classList.add('show'); val.value = "true";
         btnYes.className = "btn-toggle active-yes"; btnYes.innerText = "■ 是";
         btnNo.className = "btn-toggle"; btnNo.innerText = "□ 否";
     } else {
-        detail.classList.remove('show');
-        val.value = "false";
+        detail.classList.remove('show'); val.value = "false";
         btnYes.className = "btn-toggle"; btnYes.innerText = "□ 是";
         btnNo.className = "btn-toggle active-no"; btnNo.innerText = "■ 否";
     }
 }
-
 function addControl(idx, text) {
     const area = document.getElementById(`exist_${idx}`);
     if(area.value.includes(text)) return;
     area.value += (area.value ? "、" : "") + text;
 }
-
 function calc(idx) {
     const p = parseInt(document.getElementById(`prob_${idx}`).value);
     const s = parseInt(document.getElementById(`sev_${idx}`).value);
@@ -377,7 +361,7 @@ function calc(idx) {
     resDiv.setAttribute('data-score', score);
 }
 
-// 簽名板 (修正版)
+// 簽名板
 const canvas = document.getElementById("sigCanvas");
 const ctx = canvas.getContext("2d");
 function resize() { 
@@ -386,51 +370,28 @@ function resize() {
     ctx.scale(ratio,ratio); 
 }
 window.addEventListener("resize", resize); setTimeout(resize, 500);
-
 let isDrawing = false;
-canvas.addEventListener('mousedown', start); 
-canvas.addEventListener('touchstart', start, {passive:false});
-canvas.addEventListener('mousemove', draw); 
-canvas.addEventListener('touchmove', draw, {passive:false});
-canvas.addEventListener('mouseup', stop); 
-canvas.addEventListener('mouseout', stop); // 防止滑鼠移出停不下來
-canvas.addEventListener('touchend', stop);
-
-function start(e) { 
-    if(e.target==canvas) e.preventDefault(); 
-    hasSigned=true; 
-    ctx.beginPath(); var p=pos(e); ctx.moveTo(p.x,p.y); 
-    isDrawing = true;
-}
-function draw(e) { 
-    if(!isDrawing) return; 
-    if(e.target==canvas) e.preventDefault(); 
-    var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); 
-}
+canvas.addEventListener('mousedown', start); canvas.addEventListener('touchstart', start, {passive:false});
+canvas.addEventListener('mousemove', draw); canvas.addEventListener('touchmove', draw, {passive:false});
+canvas.addEventListener('mouseup', stop); canvas.addEventListener('mouseout', stop); canvas.addEventListener('touchend', stop);
+function start(e) { if(e.target==canvas) e.preventDefault(); hasSigned=true; ctx.beginPath(); var p=pos(e); ctx.moveTo(p.x,p.y); isDrawing=true; }
+function draw(e) { if(!isDrawing) return; if(e.target==canvas) e.preventDefault(); var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); }
 function stop() { isDrawing = false; }
 function pos(e) { var r=canvas.getBoundingClientRect(); var cx=e.touches?e.touches[0].clientX:e.clientX; var cy=e.touches?e.touches[0].clientY:e.clientY; return {x:cx-r.left,y:cy-r.top}; }
-function clearSig() { 
-    ctx.clearRect(0,0,canvas.width/window.devicePixelRatio,canvas.height/window.devicePixelRatio); 
-    hasSigned = false; 
-}
+function clearSig() { ctx.clearRect(0,0,canvas.width/window.devicePixelRatio,canvas.height/window.devicePixelRatio); hasSigned = false; }
 
 function generateReport() {
     const name = document.getElementById('empName').value;
     if(!name) { alert("請輸入姓名"); return; }
-    
-    // 錯誤清除
     document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
     let hasError = false;
-
     questions.forEach((q, i) => {
         const isApp = document.getElementById(`is_app_${i}`).value === "true";
         if(isApp) {
             const checkedTypes = document.querySelectorAll(`input[name="v_type_${i}"]:checked`);
             if(checkedTypes.length === 0) { hasError = true; document.getElementById(`v_grid_${i}`).classList.add('error-border'); }
-
             const existVal = document.getElementById(`exist_${i}`).value.trim();
             if(existVal === "") { hasError = true; document.getElementById(`exist_${i}`).classList.add('error-border'); }
-
             const sc = document.getElementById(`res_${i}`).getAttribute('data-score');
             if(parseInt(sc) >= 3) {
                 const newVal = document.getElementById(`new_${i}`).value.trim();
@@ -438,7 +399,6 @@ function generateReport() {
             }
         }
     });
-
     if(hasError) { alert("資料未填寫完整！請檢查紅色標示處。"); return; }
     if(!hasSigned) { alert("請務必在下方「簽名」確認後才能下載！"); return; }
     
@@ -449,32 +409,58 @@ function generateReport() {
     questions.forEach((q, i) => {
         const isApp = document.getElementById(`is_app_${i}`).value === "true";
         if (!isApp) {
-             rows += `<tr class="py-row" data-id="${q.id}"><td>${q.id}</td><td>${q.q}</td><td colspan="5" style="text-align:center;color:#999;">-- 不適用 --</td></tr>`;
+             rows += `<tr class="py-row" data-id="${q.id}">
+                <td style="text-align:center;">${q.id}</td>
+                <td colspan="6" style="text-align:center;color:#999;padding:15px;">${q.q} - (不適用)</td>
+            </tr>`;
         } else {
             let checkedTypes = [];
             document.querySelectorAll(`input[name="v_type_${i}"]:checked`).forEach(cb => { checkedTypes.push(cb.value); });
             let typeStr = checkedTypes.join("、");
-
             const p = document.getElementById(`prob_${i}`).value;
             const s = document.getElementById(`sev_${i}`).value;
             const sc = document.getElementById(`res_${i}`).getAttribute('data-score');
             const exist = document.getElementById(`exist_${i}`).value;
             const newM = document.getElementById(`new_${i}`).value;
             
+            // ★ 修改：風險視覺化與欄位內容
+            let scoreVal = parseInt(sc);
+            let riskHtml = "";
+            if(scoreVal >= 6) { riskHtml = `<span style="color:#c0392b;font-weight:bold;">${sc} (高度)</span>`; }
+            else if(scoreVal >= 3) { riskHtml = `<span style="color:#e67e22;font-weight:bold;">${sc} (中度)</span>`; }
+            else { riskHtml = `<span style="color:#27ae60;font-weight:bold;">${sc} (低度)</span>`; }
+
             rows += `<tr class="py-row" data-id="${q.id}">
-                <td>${q.id}</td>
+                <td style="text-align:center;">${q.id}</td>
                 <td>${q.q}<br><span style='color:#d35400;font-size:0.8rem;'>[${typeStr}]</span></td>
-                <td>${p}</td><td>${s}</td><td>${sc}</td>
-                <td>${exist}</td><td>${sc>=3 ? newM : '-'}</td>
+                <td style="text-align:center;">${p}</td>
+                <td style="text-align:center;">${s}</td>
+                <td style="text-align:center;">${riskHtml}</td>
+                <td>${exist}</td>
+                <td>${sc>=3 ? newM : '-'}</td>
             </tr>`;
         }
     });
 
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>評估-${name}</title><style>body{font-family:sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ccc;padding:8px;}</style></head><body>
-    <div style="text-align:right;font-size:0.8rem;color:#888;">v6.0 (客製讀取+自動分類)</div>
-    <h2>職場不法侵害預防評估表報告</h2>
+    // ★ 修改：表頭寬度調整
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>評估-${name}</title><style>body{font-family:sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ccc;padding:8px;}th{background:#f2f2f2;}</style></head><body>
+    <div style="text-align:right;font-size:0.8rem;color:#888;">v6.1 (報告視覺優化版)</div>
+    <h2>職場不法侵害預防評估表</h2>
     <p>人員：<span id="py-name">${name}</span> | 部門：<span id="py-dept">${dept}</span> | 日期：<span id="py-date">${date}</span></p>
-    <table><thead><tr><th>ID</th><th>項目(類型)</th><th>P</th><th>S</th><th>分</th><th>現有控制</th><th>新增對策</th></tr></thead><tbody>${rows}</tbody></table>
+    <table>
+      <thead>
+        <tr>
+          <th width="5%">ID</th>
+          <th width="35%">項目 (類型)</th>
+          <th width="8%">可能性<br>(P)</th>
+          <th width="8%">嚴重度<br>(S)</th>
+          <th width="10%">風險<br>等級</th>
+          <th width="17%">現有控制</th>
+          <th width="17%">新增對策</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
     <p>簽名：</p><img src="${canvas.toDataURL()}" style="max-height:100px;border-bottom:1px solid #000;">
     </body></html>`;
     
@@ -489,13 +475,10 @@ function generateReport() {
 function sendEmail() {
     const name = document.getElementById('empName').value;
     const dept = document.getElementById('empDept').value;
-    const subject = `職場不法侵害預防評估表報告(記得要附加文件) - ${dept} - ${name}`;
+    const subject = `職場不法侵害預防評估表 - ${dept} - ${name}`;
     const body = `負責人您好，%0D%0A%0D%0A附件為我的職場不法侵害風險評估報告，請查收。%0D%0A%0D%0A評估人員：${name}`;
     window.location.href = `mailto:${managerEmail}?subject=${subject}&body=${body}`;
 }
 </script>
 </body>
 </html>
-
-
-
