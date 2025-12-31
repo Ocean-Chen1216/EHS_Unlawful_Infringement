@@ -467,7 +467,7 @@ function generateReport() {
     const blob = new Blob([html], {type: "text/html"});
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `RiskReport_${dept}_${name}_${date}.html`;
+    link.download = `職場不法侵害預防評估報告_${dept}_${name}_${date}.html`;
     link.click();
     alert("報告已下載！請點選「寄給負責人」按鈕，並手動附加剛剛下載的檔案。");
 }
@@ -482,3 +482,4 @@ function sendEmail() {
 </script>
 </body>
 </html>
+
