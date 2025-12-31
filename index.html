@@ -472,7 +472,7 @@ function generateReport() {
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>評估-${name}</title><style>body{font-family:sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ccc;padding:8px;}</style></head><body>
     <div style="text-align:right;font-size:0.8rem;color:#888;">v6.0 (客製讀取+自動分類)</div>
-    <h2>職場不法侵害預防評估表報告(記得要附加文件)</h2>
+    <h2>職場不法侵害預防評估表報告</h2>
     <p>人員：<span id="py-name">${name}</span> | 部門：<span id="py-dept">${dept}</span> | 日期：<span id="py-date">${date}</span></p>
     <table><thead><tr><th>ID</th><th>項目(類型)</th><th>P</th><th>S</th><th>分</th><th>現有控制</th><th>新增對策</th></tr></thead><tbody>${rows}</tbody></table>
     <p>簽名：</p><img src="${canvas.toDataURL()}" style="max-height:100px;border-bottom:1px solid #000;">
@@ -489,12 +489,13 @@ function generateReport() {
 function sendEmail() {
     const name = document.getElementById('empName').value;
     const dept = document.getElementById('empDept').value;
-    const subject = `職安風險評估報告 - ${dept} - ${name}`;
+    const subject = `職場不法侵害預防評估表報告(記得要附加文件) - ${dept} - ${name}`;
     const body = `負責人您好，%0D%0A%0D%0A附件為我的職場不法侵害風險評估報告，請查收。%0D%0A%0D%0A評估人員：${name}`;
     window.location.href = `mailto:${managerEmail}?subject=${subject}&body=${body}`;
 }
 </script>
 </body>
 </html>
+
 
 
