@@ -472,7 +472,7 @@ function generateReport() {
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>評估-${name}</title><style>body{font-family:sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ccc;padding:8px;}</style></head><body>
     <div style="text-align:right;font-size:0.8rem;color:#888;">v6.0 (客製讀取+自動分類)</div>
-    <h2>職安風險評估報告</h2>
+    <h2>職場不法侵害預防評估表報告(記得要附加文件)</h2>
     <p>人員：<span id="py-name">${name}</span> | 部門：<span id="py-dept">${dept}</span> | 日期：<span id="py-date">${date}</span></p>
     <table><thead><tr><th>ID</th><th>項目(類型)</th><th>P</th><th>S</th><th>分</th><th>現有控制</th><th>新增對策</th></tr></thead><tbody>${rows}</tbody></table>
     <p>簽名：</p><img src="${canvas.toDataURL()}" style="max-height:100px;border-bottom:1px solid #000;">
@@ -496,4 +496,5 @@ function sendEmail() {
 </script>
 </body>
 </html>
+
 
