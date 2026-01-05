@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>職場不法侵害預防評估表 v7.0</title>
-<link rel="icon" href="icon-192.png" type="image/png">
-<link rel="manifest" href="manifest.json">
+<title>MK職場不法侵害預防評估表 v7.1 (報告樣式統一版)</title>
 <style>
   body { font-family: -apple-system, "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 0; color: #333; }
   
@@ -63,41 +61,15 @@
   .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 85%; max-width: 500px; border-radius: 8px; }
   .close { float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
 
-  /* ★★★ 懸浮按鈕樣式 (Floating Action Buttons) ★★★ */
-  .fab-container {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 1000;
-  }
-  
-  .btn-float {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 20px;
-      border-radius: 50px;
-      color: white;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      cursor: pointer;
-      border: none;
-      font-size: 1rem;
-      transition: transform 0.2s, box-shadow 0.2s;
-      min-width: 140px;
-  }
-  
+  /* FAB 按鈕 */
+  .fab-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
+  .btn-float { display: flex; align-items: center; justify-content: center; padding: 12px 20px; border-radius: 50px; color: white; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; border: none; font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s; min-width: 140px; }
   .btn-float:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-  
-  .btn-main { background: linear-gradient(135deg, #27ae60, #2ecc71); } /* 下載 - 綠色 */
-  .btn-sub { background: linear-gradient(135deg, #2980b9, #3498db); font-size: 0.9rem; } /* 寄信 - 藍色 */
+  .btn-main { background: linear-gradient(135deg, #27ae60, #2ecc71); } 
+  .btn-sub { background: linear-gradient(135deg, #2980b9, #3498db); font-size: 0.9rem; }
 
   @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
   
-  /* 手機版調整 */
   @media (max-width: 600px) {
       .fab-container { bottom: 20px; right: 20px; }
       .btn-float { padding: 10px 15px; font-size: 0.9rem; }
@@ -118,7 +90,7 @@
 </div>
 
 <div class="container">
-  <div class="version-tag">v7.0 (懸浮按鈕最終版)</div>
+  <div class="version-tag">v7.1 (報告樣式統一版)</div>
   <h2 style="text-align:center; color:#2c3e50;">職場不法侵害預防評估表</h2>
   <div class="section">
     <h3>1. 基本資料</h3>
@@ -442,6 +414,10 @@ function generateReport() {
     if(!name) { alert("請輸入姓名"); return; }
     document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
     let hasError = false;
+    
+    let highRiskCount = 0;
+    let midRiskCount = 0;
+    
     questions.forEach((q, i) => {
         const isApp = document.getElementById(`is_app_${i}`).value === "true";
         if(isApp) {
@@ -466,9 +442,10 @@ function generateReport() {
     questions.forEach((q, i) => {
         const isApp = document.getElementById(`is_app_${i}`).value === "true";
         if (!isApp) {
-             rows += `<tr class="py-row" data-id="${q.id}">
+             // 不適用
+             rows += `<tr style="background:#f9f9f9; color:#aaa;">
                 <td style="text-align:center;">${q.id}</td>
-                <td colspan="6" style="text-align:center;color:#999;padding:15px;">${q.q} - (不適用)</td>
+                <td colspan="6" style="text-align:center;">${q.q} - (不適用)</td>
             </tr>`;
         } else {
             let checkedTypes = [];
@@ -482,49 +459,102 @@ function generateReport() {
             
             let scoreVal = parseInt(sc);
             let riskHtml = "";
-            if(scoreVal >= 6) { riskHtml = `<span style="color:#c0392b;font-weight:bold;">${sc} (高度)</span>`; }
-            else if(scoreVal >= 3) { riskHtml = `<span style="color:#e67e22;font-weight:bold;">${sc} (中度)</span>`; }
-            else { riskHtml = `<span style="color:#27ae60;font-weight:bold;">${sc} (低度)</span>`; }
+            let rowBg = "";
+            
+            if(scoreVal >= 6) { 
+                riskHtml = `<span style="color:#c0392b;font-weight:bold;">${sc} (高度)</span>`; 
+                rowBg = "background-color:#fff5f5;";
+                highRiskCount++;
+            }
+            else if(scoreVal >= 3) { 
+                riskHtml = `<span style="color:#e67e22;font-weight:bold;">${sc} (中度)</span>`; 
+                rowBg = "background-color:#fffbf0;";
+                midRiskCount++;
+            }
+            else { 
+                riskHtml = `<span style="color:#27ae60;font-weight:bold;">${sc} (低度)</span>`; 
+            }
 
-            rows += `<tr class="py-row" data-id="${q.id}">
+            rows += `<tr style="${rowBg}">
                 <td style="text-align:center;">${q.id}</td>
-                <td>${q.q}<br><span style='color:#d35400;font-size:0.8rem;'>[${typeStr}]</span></td>
+                <td><strong style="color:#000;">${q.q}</strong><br><span style='color:#666;font-size:0.85rem;'>[${typeStr}]</span></td>
                 <td style="text-align:center;">${p}</td>
                 <td style="text-align:center;">${s}</td>
                 <td style="text-align:center;">${riskHtml}</td>
                 <td>${exist}</td>
-                <td>${sc>=3 ? newM : '-'}</td>
+                <td>${scoreVal>=3 ? newM : '-'}</td>
             </tr>`;
         }
     });
 
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>評估-${name}</title><style>body{font-family:sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid #ccc;padding:8px;}th{background:#f2f2f2;}</style></head><body>
-    <div style="text-align:right;font-size:0.8rem;color:#888;">v7.0 (懸浮按鈕最終版)</div>
-    <h2>職安風險評估報告</h2>
-    <p>人員：<span id="py-name">${name}</span> | 部門：<span id="py-dept">${dept}</span> | 日期：<span id="py-date">${date}</span></p>
+    // 統一風格的 HTML 報告
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>評估報告-${name}</title>
+    <style>
+        body{font-family:"Microsoft JhengHei", sans-serif; padding:20px; color:#333;}
+        .header { text-align: center; border-bottom: 2px solid #0288d1; margin-bottom: 20px; padding-bottom: 10px; }
+        .header h2 { margin: 0; color: #000; }
+        .info-text { font-weight: bold; margin-bottom: 5px; color: #000; font-size: 1.1rem; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+        td, th { border: 1px solid #ccc; padding: 10px; vertical-align: top; }
+        th { background: #f2f2f2; color: #333; font-weight: bold; }
+        
+        .footer-sig { margin-top: 40px; display: flex; gap: 60px; }
+        .sig-box { text-align: left; }
+        .sig-img { height: 60px; border-bottom: 1px solid #000; display: block; margin-top: 5px; }
+        .sig-placeholder { height: 60px; width: 160px; border-bottom: 1px solid #000; color: #ccc; display: flex; align-items: end; margin-top: 5px; }
+    </style></head><body>
+    
+    <div style="text-align:right;font-size:0.8rem;color:#888;">v7.1 (報告樣式統一版)</div>
+    
+    <div class="header">
+        <h2>職場不法侵害預防評估報告</h2>
+    </div>
+    
+    <div class="info-text">
+        人員：${name} &nbsp;|&nbsp; 部門：${dept} &nbsp;|&nbsp; 日期：${date}
+    </div>
+    
     <table>
       <thead>
         <tr>
           <th width="5%">ID</th>
-          <th width="35%">項目 (類型)</th>
-          <th width="8%">可能性<br>(P)</th>
-          <th width="8%">嚴重度<br>(S)</th>
-          <th width="10%">風險<br>等級</th>
-          <th width="17%">現有控制</th>
-          <th width="17%">新增對策</th>
+          <th width="30%">評估項目 (類型)</th>
+          <th width="5%">P</th>
+          <th width="5%">S</th>
+          <th width="10%">風險</th>
+          <th width="22%">現有控制</th>
+          <th width="22%">新增對策</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
-    <p>簽名：</p><img src="${canvas.toDataURL()}" style="max-height:100px;border-bottom:1px solid #000;">
+    
+    <p style="margin-top:15px; font-weight:bold;">
+        結果統計：
+        ${highRiskCount > 0 ? '<span style="color:red">高度風險 ('+highRiskCount+')</span>' : '<span style="color:#ccc">高度 (0)</span>'} 、
+        ${midRiskCount > 0 ? '<span style="color:orange">中度風險 ('+midRiskCount+')</span>' : '<span style="color:#ccc">中度 (0)</span>'}
+    </p>
+    
+    <div class="footer-sig">
+        <div class="sig-box">
+            <span>評估人員簽章：</span>
+            <img src="${canvas.toDataURL()}" class="sig-img">
+        </div>
+        <div class="sig-box">
+            <span>職安人員複核：</span>
+            <div class="sig-placeholder">(請簽核)</div>
+        </div>
+    </div>
+    
     </body></html>`;
     
     const blob = new Blob([html], {type: "text/html"});
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `職場不法侵害預防評估表_${dept}_${name}_${date}.html`;
+    link.download = `職安評估報告_${dept}_${name}_${date}.html`;
     link.click();
-    alert("報告已下載！請點選「寄給負責人」按鈕，並手動附加剛剛下載的檔案。");
+    alert("報告下載完成！請接著點選「寄給負責人」並附加檔案。");
 }
 
 function sendEmail() {
@@ -537,4 +567,3 @@ function sendEmail() {
 </script>
 </body>
 </html>
-
