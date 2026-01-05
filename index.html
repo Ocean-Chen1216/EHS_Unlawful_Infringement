@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MK職場不法侵害預防評估表 v7.1 (報告樣式統一版)</title>
+<title>職場不法侵害預防之危害辨識及風險評估表 v7.1 (報告樣式統一版)</title>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="manifest" href="manifest.json">
 <style>
@@ -93,7 +93,7 @@
 
 <div class="container">
   <div class="version-tag">v7.1 (報告樣式統一版)</div>
-  <h2 style="text-align:center; color:#2c3e50;">職場不法侵害預防評估表</h2>
+  <h2 style="text-align:center; color:#2c3e50;">職場不法侵害預防之危害辨識及風險評估表</h2>
   <div class="section">
     <h3>1. 基本資料</h3>
     <label>姓名</label><input type="text" id="empName" placeholder="請輸入姓名">
@@ -562,11 +562,12 @@ function generateReport() {
 function sendEmail() {
     const name = document.getElementById('empName').value;
     const dept = document.getElementById('empDept').value;
-    const subject = `職安風險評估報告 - ${dept} - ${name}`;
-    const body = `負責人您好，%0D%0A%0D%0A附件為我的職場不法侵害風險評估報告，請查收。%0D%0A%0D%0A評估人員：${name}`;
+    const subject = `職場不法侵害預防之危害辨識及風險評估報告 - ${dept} - ${name}`;
+    const body = `負責人您好，%0D%0A%0D%0A附件為我的職場不法侵害評估報告，請查收。%0D%0A%0D%0A評估人員：${name}`;
     window.location.href = `mailto:${managerEmail}?subject=${subject}&body=${body}`;
 }
 </script>
 </body>
 </html>
+
 
